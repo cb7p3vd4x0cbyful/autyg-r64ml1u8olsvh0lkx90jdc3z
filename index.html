@@ -49,10 +49,13 @@ async function open(k,buf){const u=new Uint8Array(buf);if(u[0]!==1)throw new Err
   const key=await crypto.subtle.importKey('raw',k,'AES-GCM',false,['decrypt']);
   const x=await crypto.subtle.decrypt({name:'AES-GCM',iv:u.slice(1,13)},key,u.slice(13));
   return await new Response(new Blob([x]).stream().pipeThrough(new DecompressionStream('gzip'))).text()}
+async function seal(k,o){const key=await crypto.subtle.importKey('raw',k,'AES-GCM',false,['encrypt']),iv=crypto.getRandomValues(new Uint8Array(12));
+  const z=new Uint8Array(await new Response(new Blob([JSON.stringify(o)]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());
+  const c=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,z)),u=new Uint8Array(13+c.length);u[0]=1;u.set(iv,1);u.set(c,13);return u}
 async function get(n){try{const r=await fetch(n,{cache:'no-cache'});if(r.ok)return await r.arrayBuffer()}catch(e){}
   if('caches' in window){const c=await caches.match(n);if(c)return await c.arrayBuffer()}throw new Error('rete')}
 async function boot(k,keep){const page=await open(k,await get('a.bin'));if(keep)try{localStorage.setItem('k',b64(k))}catch(e){}
-  window.__d=async m=>{if(m==='cache'){if(!('caches' in window))return null;const c=await caches.match('d.bin');return c?JSON.parse(await open(k,await c.arrayBuffer())):null}
+  window.__d=async(m,x)=>{if(m==='seal')return seal(k,x);if(m==='unseal')return JSON.parse(await open(k,x));if(m==='cache'){if(!('caches' in window))return null;const c=await caches.match('d.bin');return c?JSON.parse(await open(k,await c.arrayBuffer())):null}
     const r=await fetch('d.bin',{cache:'no-store'});if(!r.ok)throw new Error(r.status);return JSON.parse(await open(k,await r.arrayBuffer()))};
   document.open();document.write(page);document.close()}
 function ask(msg){$('s').hidden=true;document.documentElement.style.background=document.body.style.background='';const f=$('f');f.hidden=false;$('e').textContent=msg||'';$('b').disabled=false;setTimeout(()=>$('p').focus(),50)}
