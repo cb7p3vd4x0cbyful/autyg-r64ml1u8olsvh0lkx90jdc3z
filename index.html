@@ -23,9 +23,13 @@ input:focus{box-shadow:inset 0 0 0 1.5px #d97757}
 button{height:50px;border:0;border-radius:18px;background:#d97757;color:#fff;font:600 16px -apple-system,system-ui,sans-serif}
 button:disabled{opacity:.5}
 p{margin:0;min-height:20px;text-align:center;color:#9a9184;font-size:14px}
+#s{position:fixed;inset:0;display:grid;place-items:center;background:inherit}
+#s[hidden]{display:none}
+#s svg{width:108px;height:72px}
 </style>
 </head>
 <body>
+<div id="s"><svg viewBox="0 0 12 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="#e78d6d" d="M3 0h6v1H3zM2 1h8v1H2zM1 2h10v4H1zM0 6h12v1H0zM1 7h10v1H1z"/><path fill="#1c1b19" d="M4 4h1v1H4zM7 4h1v1H7z"/></svg></div>
 <form id="f" hidden>
 <input type="text" name="username" autocomplete="username" value="app" hidden>
 <input id="p" name="password" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="Codice">
@@ -33,7 +37,8 @@ p{margin:0;min-height:20px;text-align:center;color:#9a9184;font-size:14px}
 <p id="e"></p>
 </form>
 <script>
-(function(){
+(function(){window.__t0=Date.now();
+try{const b=localStorage.getItem('b');if(/^#[0-9a-f]{6}$/i.test(b||''))document.documentElement.style.background=document.body.style.background=b}catch(e){}
 const S='e4c4687219bc7db474f6485696784900',N=600000,$=i=>document.getElementById(i);
 const hex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
 const b64=u=>btoa(String.fromCharCode(...u)),unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
@@ -50,14 +55,14 @@ async function boot(k,keep){const page=await open(k,await get('a.bin'));if(keep)
   window.__d=async m=>{if(m==='cache'){if(!('caches' in window))return null;const c=await caches.match('d.bin');return c?JSON.parse(await open(k,await c.arrayBuffer())):null}
     const r=await fetch('d.bin',{cache:'no-store'});if(!r.ok)throw new Error(r.status);return JSON.parse(await open(k,await r.arrayBuffer()))};
   document.open();document.write(page);document.close()}
-function ask(msg){const f=$('f');f.hidden=false;$('e').textContent=msg||'';$('b').disabled=false;setTimeout(()=>$('p').focus(),50)}
+function ask(msg){$('s').hidden=true;document.documentElement.style.background=document.body.style.background='';const f=$('f');f.hidden=false;$('e').textContent=msg||'';$('b').disabled=false;setTimeout(()=>$('p').focus(),50)}
 $('f').addEventListener('submit',async ev=>{ev.preventDefault();const pw=$('p').value;if(!pw.trim())return;$('b').disabled=true;$('e').textContent='…';
   try{await boot(await derive(pw),true)}
   catch(e){$('p').value='';ask(e&&e.message==='rete'?'Senza rete. Riprova.':'Codice non valido.')}});
 if('serviceWorker' in navigator&&isSecureContext)navigator.serviceWorker.register('sw.js').catch(()=>{});
 let k=null;try{const t=localStorage.getItem('k');if(t)k=unb64(t)}catch(e){}
 if(!k){ask();return}
-boot(k).catch(e=>{if(e&&e.message==='rete'){document.body.innerHTML='<form style="display:grid"><p>Senza rete.</p><button type="button" onclick="location.reload()">Riprova</button></form>';return}
+boot(k).catch(e=>{if(e&&e.message==='rete'){$('s').hidden=true;document.body.innerHTML='<form style="display:grid"><p>Senza rete.</p><button type="button" onclick="location.reload()">Riprova</button></form>';return}
   try{localStorage.removeItem('k')}catch(x){}ask()});
 })();
 </script>

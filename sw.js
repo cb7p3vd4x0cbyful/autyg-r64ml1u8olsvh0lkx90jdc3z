@@ -33,8 +33,8 @@ self.addEventListener('fetch', e => {
   const u = new URL(r.url);
   if (r.headers.has('range')) return;
   if (u.origin !== location.origin) return;
-  if (r.mode === 'navigate' || u.pathname.endsWith('/') || u.pathname.endsWith('index.html')) { e.respondWith(netFirst(r, './', 3000)); return; }
-  if (u.pathname.endsWith('/a.bin')) { e.respondWith(netFirst(r, 'a.bin', 4000)); return; }
+  if (r.mode === 'navigate' || u.pathname.endsWith('/') || u.pathname.endsWith('index.html')) { e.respondWith(netFirst(r, './', 1200)); return; }
+  if (u.pathname.endsWith('/a.bin')) { e.respondWith(netFirst(r, 'a.bin', 1200)); return; }
   if (u.pathname.endsWith('/d.bin')) { e.respondWith(netSave(r, 'd.bin')); return; }
   if (/\.(png|webmanifest)$/.test(u.pathname)) e.respondWith(staleWhile(r));
 });
