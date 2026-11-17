@@ -42,7 +42,7 @@ html.ios0 #s svg{opacity:0}
 (function(){window.__t0=Date.now();
 const R=document.documentElement;
 try{const b=localStorage.getItem('b');if(/^#[0-9a-f]{6}$/i.test(b||'')){R.style.setProperty('--sb',b);R.style.background=document.body.style.background=b}}catch(e){}
-if(navigator.standalone===true){const h=matchMedia('(orientation: landscape)').matches?Math.min(screen.width,screen.height):Math.max(screen.width,screen.height);
+if(navigator.standalone===true&&Math.min(screen.width,screen.height)<600){const h=matchMedia('(orientation: landscape)').matches?Math.min(screen.width,screen.height):Math.max(screen.width,screen.height);
   R.style.setProperty('--sy',h/2+'px');R.classList.add('ios0');requestAnimationFrame(()=>requestAnimationFrame(()=>R.classList.remove('ios0')))}
 const S='e4c4687219bc7db474f6485696784900',N=600000,$=i=>document.getElementById(i);
 const hex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
