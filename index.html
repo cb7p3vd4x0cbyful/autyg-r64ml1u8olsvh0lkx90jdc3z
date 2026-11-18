@@ -15,7 +15,7 @@
 <link rel="icon" href="icon-192.png?v=3">
 <title>App</title>
 <style>
-html,body{margin:0;height:100%;background:#161514;color:#f2ede4;font:16px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-text-size-adjust:100%}
+html,body{margin:0;height:100%;background:var(--b,#161514);color:#f2ede4;font:16px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;-webkit-text-size-adjust:100%}
 form{position:fixed;inset:0;display:grid;place-content:center;gap:12px;padding:24px;width:min(320px,calc(100vw - 48px));margin:auto}
 form[hidden]{display:none}
 input{height:50px;padding:0 18px;border:0;border-radius:18px;background:rgba(255,255,255,.08);color:inherit;font:inherit;font-size:17px;outline:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
@@ -24,12 +24,17 @@ button{height:50px;border:0;border-radius:18px;background:#d97757;color:#fff;fon
 button:disabled{opacity:.5}
 p{margin:0;min-height:20px;text-align:center;color:#9a9184;font-size:14px}
 html,body{transition:background-color .5s ease}
-#s{position:fixed;top:-120px;bottom:-120px;left:0;right:0;background:var(--sb,#161514);box-shadow:0 0 0 100vmax var(--sb,#161514);transition:background-color .5s ease,box-shadow .5s ease}
+html.ios0,html.ios0 body{background:#000}
+#s{position:fixed;top:-120px;bottom:-120px;left:0;right:0;background:var(--b,#161514);box-shadow:0 0 0 100vmax var(--b,#161514);transition:background-color .5s ease,box-shadow .5s ease}
 #s[hidden]{display:none}
 #s svg{position:absolute;left:50%;top:calc(var(--sy,calc(50% - 120px)) + 120px);width:108px;height:72px;margin:-36px 0 0 -54px;transition:opacity .5s ease}
-html.ios0 #s{--sb:#000}
+html.ios0 #s{background:#000;box-shadow:0 0 0 100vmax #000}
 html.ios0 #s svg{opacity:0}
 </style>
+<script>
+(function(){var R=document.documentElement,B='#161514';try{var b=localStorage.getItem('b');if(/^#[0-9a-f]{6}$/i.test(b||''))B=b}catch(e){}R.style.setProperty('--b',B);
+  if(navigator.standalone===true&&Math.min(screen.width,screen.height)<600){var h=matchMedia('(orientation: landscape)').matches?Math.min(screen.width,screen.height):Math.max(screen.width,screen.height);R.style.setProperty('--sy',h/2+'px');R.classList.add('ios0')}})();
+</script>
 </head>
 <body>
 <div id="s"><svg viewBox="0 0 12 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="#e78d6d" d="M3 0h6v1H3zM2 1h8v1H2zM1 2h10v4H1zM0 6h12v1H0zM1 7h10v1H1z"/><path fill="#1c1b19" d="M4 4h1v1H4zM7 4h1v1H7z"/></svg></div>
@@ -42,10 +47,7 @@ html.ios0 #s svg{opacity:0}
 <script>
 (function(){window.__t0=Date.now();
 const R=document.documentElement;
-let B='#161514';try{const b=localStorage.getItem('b');if(/^#[0-9a-f]{6}$/i.test(b||'')){B=b;R.style.setProperty('--sb',b);R.style.background=document.body.style.background=b}}catch(e){}
-if(navigator.standalone===true&&Math.min(screen.width,screen.height)<600){const h=matchMedia('(orientation: landscape)').matches?Math.min(screen.width,screen.height):Math.max(screen.width,screen.height);
-  R.style.setProperty('--sy',h/2+'px');R.classList.add('ios0');R.style.background=document.body.style.background='#000';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{R.classList.remove('ios0');R.style.background=document.body.style.background=B}))}
+if(R.classList.contains('ios0'))requestAnimationFrame(()=>requestAnimationFrame(()=>R.classList.remove('ios0')));
 const S='e4c4687219bc7db474f6485696784900',N=600000,$=i=>document.getElementById(i);
 const hex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
 const b64=u=>btoa(String.fromCharCode(...u)),unb64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
@@ -66,7 +68,7 @@ async function boot(k,keep){const page=await open(k,await get('a.bin'));if(keep)
     const r=await fetch('d.bin',{cache:'no-store'});if(!r.ok)throw new Error(r.status);return JSON.parse(await open(k,await r.arrayBuffer()))};
   const w=520-(Date.now()-window.__t0);if(w>0)await new Promise(r=>setTimeout(r,w));
   document.open();document.write(page);document.close()}
-function ask(msg){$('s').hidden=true;document.documentElement.style.background=document.body.style.background='';const f=$('f');f.hidden=false;$('e').textContent=msg||'';$('b').disabled=false;setTimeout(()=>$('p').focus(),50)}
+function ask(msg){$('s').hidden=true;R.classList.remove('ios0');R.style.setProperty('--b','#161514');const f=$('f');f.hidden=false;$('e').textContent=msg||'';$('b').disabled=false;setTimeout(()=>$('p').focus(),50)}
 $('f').addEventListener('submit',async ev=>{ev.preventDefault();const pw=$('p').value;if(!pw.trim())return;$('b').disabled=true;$('e').textContent='…';
   try{await boot(await derive(pw),true)}
   catch(e){$('p').value='';ask(e&&e.message==='rete'?'Senza rete. Riprova.':'Codice non valido.')}});
